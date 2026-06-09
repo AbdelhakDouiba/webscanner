@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>WebScanner Report</title>
+	<style>
+		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+		h1 { font-size: 24px; margin: 0 0 4px 0; }
+		.meta { color: #555; margin-bottom: 16px; }
+		table { border-collapse: collapse; width: 100%; }
+		th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+		th { background: #f7f7f7; text-align: left; }
+		.risk-high { color: #b00020; font-weight: bold; }
+		.risk-medium { color: #d48806; font-weight: bold; }
+		.risk-low { color: #2b7a0b; font-weight: bold; }
+		.risk-info { color: #555; font-weight: bold; }
+		.small { font-size: 12px; color: #666; }
+		code { background: #f3f3f3; padding: 1px 4px; border-radius: 3px; }
+	</style>
+</head>
+<body>
+	<h1>WebScanner Report</h1>
+	<div class="meta">
+		<strong>Target:</strong> {{ target_url }}<br>
+		<strong>Scanned:</strong> {{ scanned_at }}<br>
+		<strong>Total Findings:</strong> {{ count }}
+	</div>
+
+	{% if alerts|length == 0 %}
+	<p>No XSS/CSRF/SQLi vulnerabilities were found.</p>
+	{% else %}
+	<table>
+		<thead>
+			<tr>
+				<th>Risk</th>
+				<th>Alert</th>
+				<th>URL</th>
+				<th>Evidence</th>
+				<th>Description</th>
+				<th>Solution</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for a in alerts %}
+			<tr>
+				<td class="risk-{{ (a.risk or '').lower() }}">{{ a.risk or 'N/A' }}</td>
+				<td>{{ a.alert }}</td>
+				<td class="small">{{ a.url }}</td>
+				<td class="small">{{ a.evidence or '' }}</td>
+				<td class="small">{{ a.description or '' }}</td>
+				<td class="small">{{ a.solution or '' }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</body>
+</html>
